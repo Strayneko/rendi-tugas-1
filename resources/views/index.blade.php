@@ -102,7 +102,7 @@
 {{-- check query parameter is given --}}
 @if (!empty($request->query('active')))
     {{-- set filter active to specified query input --}}
-    @php($filter['active'] = $request->query('active'))
+    @php($filter['active'] = filter_var($request->query('active'), FILTER_VALIDATE_BOOLEAN))
 @endif
 
 
