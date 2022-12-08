@@ -83,6 +83,7 @@
         ],
     ];
     
+    // initializing filter var
     $filter = [];
     
     // covert users array into collection
