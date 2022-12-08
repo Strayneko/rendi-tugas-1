@@ -1,3 +1,4 @@
+@inject('request', 'Illuminate\Http\Request')
 @php
     $users = [
         [
@@ -81,36 +82,82 @@
             'role' => 'user',
         ],
     ];
-    $filter = [
-        'active' => true,
-        'role' => 'user',
-    ];
+    
+    $filter = [];
+    
     // covert users array into collection
-    $users_collection = collect($users);
+    // $users = collect($users);
+    
     // if $filter is not empty: do filtering
     // when filter is not empty show all users
-    $users_collection = !empty($filter)
-        ? $users_collection
-            ->where('active', $filter['active'])
-            ->where('role', $filter['role'])
-            ->all()
-        : $users_collection->all();
+    // $users = !empty($filter)
+    //     ? $users
+    //         ->where('active', $filter['active'])
+    //         ->where('role', $filter['role'])
+    //         ->all()
+    //     : $users->all();
+    
 @endphp
+{{-- check query parameter is given --}}
+@if (!empty($request->query('active')))
+    {{-- set filter active to specified query input --}}
+    @php($filter['active'] = $request->query('active'))
+@endif
+
+
+{{-- check query parameter is given --}}
+@if (!empty($request->query('role')))
+    {{-- set filter role to specified query input --}}
+    @php($filter['role'] = $request->query('role'))
+@endif
+
 
 @extends('templates.base')
+
 {{-- defining icon variable --}}
 @php($icon = asset('images/favicons/favicon.ico'))
 @section('icon', $icon)
 @section('title', 'Coba ')
 
 
-
-
-
 @section('content')
+
+    <form action="" class="col-md-3">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Role</label>
+            <select class="form-select" name="role">
+                <option value="admin" @if (!is_null($request->get('role'))) @if ($request->get('role') == 'admin') selected @endif
+                    @endif>Admin</option>
+                <option value="user" @if (!is_null($request->get('role'))) @if ($request->get('role') == 'user') selected @endif
+                    @endif>User</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Active</label>
+            <select class="form-select" aria-label="Default select example" name="active">
+                <option value="true" @if (!is_null($request->get('active'))) @if ($request->get('active') == 'true') selected @endif
+                    @endif>True</option>
+                <option value="false" @if (!is_null($request->get('active'))) @if ($request->get('active') == 'false') selected @endif
+                    @endif>False</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mb-4">Filter</button>
+        <a href="{{ route('home') }}" class="btn btn-warning mb-4">Hapus Filter</a>
+
+    </form>
     <div class="row">
-        @foreach ($users_collection as $user)
-            @include('components.card', ['user' => $user])
+        @foreach ($users as $user)
+            {{-- check if $filter variable is empty --}}
+            @if (!empty($filter))
+                {{-- do filtering --}}
+                @if ($user['role'] == $filter['role'] && $user['active'] == $filter['active'])
+                    @include('components.card', ['user' => $user])
+                @endif
+                {{-- show all users when $filter variable is empty --}}
+            @else
+                @include('components.card', ['user' => $user])
+            @endif
         @endforeach
     </div>
 @endsection

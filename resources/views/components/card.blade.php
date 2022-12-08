@@ -5,6 +5,7 @@
                 <h5 class="card-title">{{ $user['nama'] }}</h5>
                 <p class="card-text">{{ $user['bio'] }}</p>
                 <p class="card-text">{{ $user['alamat'] }}</p>
+                <p class="card-text">Aktif: {{ $user['active'] ? 'Ya' : 'Tidak' }}</p>
                 <p class="card-text">Role: {{ $user['role'] }}</p>
             </div>
         </div>
